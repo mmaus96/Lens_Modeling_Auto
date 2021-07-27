@@ -28,25 +28,10 @@ from copy import deepcopy
 from lenstronomy.Plots.model_plot import ModelPlot
 
 
-# path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/ringcatalog/'
-# im_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/ringcatalog/data/'
-# csv_paths = [path + 'results_full_catalog/']
-# results_path = path + 'results_full_catalog'
-
-# path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Sure_Lens/'
-# im_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Sure_Lens/data/'
-# csv_paths = [path + 'results_new_priors/']
-# results_path = path + 'results_new_priors'
-
-# path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/Sure_Lens/'
-# im_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/data/'
-# csv_path = path + 'results_PEMD_Ap11/'
-# results_path = path + 'results_PEMD_Ap11'
-
-path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_deblended/deblended_image_2/modeling_results_deblended/'
-im_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_deblended/deblended_image_2/originals/lenses/'
-csv_path = path + 'results_deblended/'
-results_path = path + 'results_deblended'
+path = '<parent folder>'
+im_path = '<path to data>'
+csv_path = path + '<modeling results folder name>/'
+results_path = path + '<modeling results folder name>/'
 
 
 
