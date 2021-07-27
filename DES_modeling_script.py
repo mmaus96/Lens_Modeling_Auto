@@ -43,38 +43,33 @@ from Lens_Modeling_Auto.plot_functions import save_chain_list
 
 #####################################################################################################################
 
-# nohup python -u ./Lens_Modeling_Auto/DES_modeling_script.py > lens_candidates/Group1/SIE_lens/results_Reff_prior/output_logs/output0_10.log &
+# nohup python -u ./Lens_Modeling_Auto/DES_modeling_script.py > /results/output.log &
 
 # print('lenstronomy version: {}'.format(lenstronomy.__version__))
 
 # file paths to image data and results destination [TO DO BY USER]
-data_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1'
-results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/SIE_lens/results_Reff_prior'
-# results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/SIE_lens/test_use_seed'
-# results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/PEMD_lens/results_Mar29'
-
-# data_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Sure_Lens'
-# results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Sure_Lens/results_e1e2_free'
+data_path = 'DES_lenses'
+results_path = 'DES_lenses/results_test'
 
 if not exists(results_path):
     os.mkdir(results_path)
 
 #Folder names for data, psf, noise map, original image [TO DO BY USER]
-im_path = data_path + '/data'
+im_path = data_path + '/data'#add name of folder with image data
 # im_path = data_path + '/simulations'
-psf_path = data_path + '/psf'
-noise_path = data_path + '/psf'
+psf_path = data_path + '/psf' #add name of folder with psf data
+noise_path = data_path + '/psf' #add name of folder with rms data, OR folder with FITS files that contain exposure times in header files (if using 'EXPTIME' for noise_type)
 noise_type = 'EXPTIME' # 'NOISE_MAP' or 'EXPTIME'
 band_list = ['g','r','i'] #list of bands
 obj_name_location = 0 # index corresponding to which string of numbers in filenames are the ID 
 
 #Modeling Options [TO DO BY USER]
-fix_seed = True #bool. If True, uses saved seed values for each image from a previous modeling run
-source_seed_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/SIE_lens/results_Jun1/random_seed_init/' #path to seed values to be used
 use_shapelets = False #If True,then at the end of the modeling it tries shapelets instead of Sersic for the source profile if chi^2 is too large
-use_mask = True #whether or not masks should be used in the modeling
-mask_pickle_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/SIE_lens/results_Jun1/masks/' #path to masks created previously. If None, new masks will be created by the script
-Mask_rad_file = None #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/mask_v2.csv' #path to csv file with pre-calculated mask size or 'None' 
+fix_seed = False #bool. If True, uses saved seed values for each image from a previous modeling run
+source_seed_path = '<previous results folder>/random_seed_init/' #path to seed values to be used
+use_mask = True #bool; whether or not masks should be used in the modeling
+mask_pickle_path = '<previous results folder>/masks/'#path to masks created previously. If None, new masks will be created by the script
+Mask_rad_file = None #path to csv file or 'None'
 
 #model lists
 lens_model_list = ['SIE','SHEAR'] 
