@@ -60,42 +60,10 @@ class HiddenPrints:
         sys.stdout = self._original_stdout
         
 
-# path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/'
-# csv_path = path + 'SIE_lens/results_Jun1/'
-# masks_path = path + 'SIE_lens/results_Jun1/masks/'
-# results_path = path + 'SIE_lens/results_Jun1' 
-# everything_in_df = False
-# names_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/SL.csv'
-# ra_dec_path = path + 'group1_v2.csv'
-# id_col_name = 'id_1'
-# fixed_mask_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/SIE_lens/custom_masks/results_new_mask_final/'
-# df_fixed_mask = pd.read_csv(fixed_mask_path + 'full_results_sorted.csv',delimiter =',')
-# select_objects =  ['3310601','6653211','6788344','14083401',
-#                     '14327423','15977522','16033319','17103670',
-#                     '19990514']
 
 
-# path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/'
-# csv_path = path + 'muscadet_deblended/results_Jun24/'
-# masks_path = path + 'muscadet_deblended/results_Jun24/masks/'
-# results_path = path + 'muscadet_deblended/results_Jun24' 
-# everything_in_df = True
-# names_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/SL.csv'
-# ra_dec_path = path + 'group1_v2.csv'
-# id_col_name = 'id_1'
-# fixed_mask_path = None #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/muscadet_deblended/custom_masks/final/'
-# df_fixed_mask = None#pd.read_csv(fixed_mask_path + 'full_results_sorted.csv',delimiter =',')
-# select_objects =  ['3310601','6653211','6788344','14083401',
-#                     '14327423','15977522','16033319','17103670',
-#                     '19990514']
 
-# selected = [30,48]
-
-# path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/ringcatalog/'
-# csv_path = path + 'results_May3/'
-# results_path = path + 'results_May3'
-
-path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/'
+path = '/CFIS_lenses/'
 csv_path = path + 'Sure_Lens/SIE_lens/results_May31/' #path to csv file
 masks_path = path + 'Sure_Lens/SIE_lens/results_May31/masks' #path to folder with all masks for each lens
 results_path = path + 'Sure_Lens/SIE_lens/results_May31' #path to results folder 
@@ -104,7 +72,7 @@ names_path = None #path to csv files with object names (if exists), or None
 ra_dec_path = path + 'lenses_coord.csv' #path to csv file that contains IDs, RA and dec info for all images
 name_root = 'CFIS' #root in front of object name (e.g. name_root='CFIS' -> object names become 'CFIS J######-######'
 id_col_name = 'idPS1' #column name in csv file with ra,dec, and names corresponding to object ID 
-fixed_mask_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/Sure_Lens/SIE_lens/test_best_seed/test_final/'#path to folder with results using custom mask
+fixed_mask_path = ''#path to folder with results using custom mask
 df_fixed_mask = pd.read_csv(fixed_mask_path + 'full_results.csv',delimiter =',') #dataframe of results when using custom masks
 
 #if only some of the fixed mask images are to be included in mosaics:
@@ -112,23 +80,26 @@ select_objects = ['144641749689622225','146212542943478163',
                     '149131184425371844','149231702242056192']
 df_cut = df_fixed_mask.loc[df_fixed_mask['ID'].isin(np.array(select_objects, dtype=np.int64))]
 df_fixed_mask = df_cut.reset_index(drop=True) #new dataframe of results with custom masks
-# df_fixed_mask
+df_fixed_mask
 
-# path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/'
-# csv_path = path + 'Sure_Lens/SIE_lens/results_custom_masks_3/'
-# masks_path = path + 'Sure_Lens/SIE_lens/results_custom_masks_3/masks'
-# results_path = path + 'Sure_Lens/SIE_lens/results_custom_masks_3'
-# names_path = None
-# ra_dec_path = None
+# path = '/lens_candidates/Group1/'
+# csv_path = path + 'SIE_lens/results_Jun1/'
+# masks_path = path + 'SIE_lens/results_Jun1/masks/'
+# results_path = path + 'SIE_lens/results_Jun1' 
+# everything_in_df = False
+# names_path = '/lens_candidates/SL.csv'
+# ra_dec_path = path + 'group1_v2.csv'
+# id_col_name = 'id_1'
+# fixed_mask_path = '<path to results with custom masks'
+# df_fixed_mask = pd.read_csv(fixed_mask_path + 'full_results_sorted.csv',delimiter =',')
+# select_objects =  ['3310601','6653211','6788344','14083401',
+#                     '14327423','15977522','16033319','17103670',
+#                     '19990514']
+
 
 if not exists(results_path + '/residual_plots'):
     os.mkdir(results_path + '/residual_plots')
 
-# path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_deblended/deblended_image_2/modeling_results_normal/'
-# im_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_deblended/deblended_image_2/originals/lenses/'
-# psf_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_deblended/deblended_image_2/psf/'
-# csv_path = path + 'results_model_orig/'
-# results_path = path + 'results_model_orig'
 
 im_path = path + 'data/' #path to image data
 psf_path = path + 'psf/'
@@ -160,7 +131,7 @@ lens_light_model_list = ['SERSIC_ELLIPSE']
 includeShear = True #if shear in lens_model_list
 use_mask = True #whether or not masks should be used in the modeling
 masks_path = csv_path + 'masks'
-Mask_rad_file = None#csv_path + 'full_results_sorted.csv' #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/results_mask_final/full_results_sorted.csv' #path to csv file or 'None'
+Mask_rad_file = None#csv_path + 'full_results_sorted.csv'  #path to csv file or 'None'
 
 
 
@@ -303,7 +274,7 @@ lens_light_class = LightModel(light_model_list = lens_light_model_list)
 # source_class = LightModel(light_model_list = multi_source_model_list)
 # lens_light_class = LightModel(light_model_list = multi_lens_light_model_list)
 
-###################### Begin loop and plotting
+###################### Begin loop and plotting #############################
 
 #number of rows & columns
 ncols = 5
