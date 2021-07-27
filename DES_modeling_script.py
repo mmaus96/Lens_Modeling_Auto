@@ -48,8 +48,8 @@ from Lens_Modeling_Auto.plot_functions import save_chain_list
 # print('lenstronomy version: {}'.format(lenstronomy.__version__))
 
 # file paths to image data and results destination [TO DO BY USER]
-data_path = 'DES_lenses'
-results_path = 'DES_lenses/results_test'
+data_path = 'DES_lenses' #path to image data
+results_path = 'DES_lenses/results_test' #path to designated results folder
 
 if not exists(results_path):
     os.mkdir(results_path)
