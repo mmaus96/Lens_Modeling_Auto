@@ -19,9 +19,8 @@ from Lens_Modeling_Auto.plot_functions import make_chainPlots
 from Lens_Modeling_Auto.plot_functions import make_cornerPlots
 from Lens_Modeling_Auto.plot_functions import plot_mcmc_behaviour_alt
 
-results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/SIE_lens/results_Ap23/'
-# results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/Sure_Lens/image19_2/'
-# results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_deblended/deblended_image_2/modeling_results_normal/results_model_orig/'
+results_path = '<path to modeling results>'
+
 chainList_path = results_path + '/chain_lists'
 chainList_init_path = results_path + '/chain_lists_init'
 chainPlot_path = results_path + '/chainPlot_results'
