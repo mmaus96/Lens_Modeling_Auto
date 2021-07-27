@@ -48,10 +48,8 @@ from Lens_Modeling_Auto.plot_functions import save_chain_list
       
 
 # file paths to image data and results destination [TO DO BY USER]
-# data_path = '/home/astro/maus/Desktop/LASTRO_lab/Specialization_Project/ringcatalog'
-# results_path = '/home/astro/maus/Desktop/LASTRO_lab/Specialization_Project/ringcatalog/results_full_catalog'
-data_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_deblended/deblended_image_2/'
-results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_deblended/deblended_image_2/modeling_results_deblended/image_3_n500'
+data_path = ''
+results_path = ''
 
 if not exists(results_path):
     os.mkdir(results_path)
@@ -87,7 +85,7 @@ zeroPt = 30
 psf_upsample_factor = 2
 ra_dec = None # 'csv', 'header', or 'None'
 ra_dec_loc = None #path to csv file or header file, or 'None'
-Mask_rad_file = None #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/mask_v2.csv' #path to csv file or 'None'
+Mask_rad_file = None #'.csv' #path to csv file or 'None'
 
 id_col_name = 'id_1'
 
