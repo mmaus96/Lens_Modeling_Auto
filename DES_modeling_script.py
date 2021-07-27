@@ -81,7 +81,7 @@ numCores = 1 # number of CPUs to use
 
 #path to Reff and n_s source distributions that lenstronomy uses for kde prior method. 
 #Warning: Method is very slow. Better to set to None
-kde_prior_path = None #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/kde_priors/'
+kde_prior_path = None #'<folder with R_eff and n_s distributions saved as pickle files>'
 if kde_prior_path != None:
     with open(kde_prior_path + 'R_source.pickle', 'rb') as handle:
         kde_Rsource = pickle.load(handle)
