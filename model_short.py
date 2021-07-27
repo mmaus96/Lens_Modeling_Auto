@@ -42,14 +42,12 @@ from Lens_Modeling_Auto.plot_functions import save_chain_list
 
 #####################################################################################################################
 
-# nohup python -u ./Lens_Modeling_Auto/model_short.py > CFIS_lenses/Sure_Lens/SIE_Lens/new_lenses/results_ps_shape_sersic/output.log &
+# nohup python -u ./Lens_Modeling_Auto/model_short.py > <results_path>/output.log &
       
 
 # file paths to image data and results destination [TO DO BY USER]
-# data_path = '/home/astro/maus/Desktop/LASTRO_lab/Specialization_Project/ringcatalog'
-# results_path = '/home/astro/maus/Desktop/LASTRO_lab/Specialization_Project/ringcatalog/results_full_catalog'
-data_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses'
-results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/Sure_Lens/SIE_Lens/new_lenses/results_ps_shape_sersic'
+data_path = ''
+results_path = ''
 
 if not exists(results_path):
     os.mkdir(results_path)
@@ -66,9 +64,9 @@ obj_name_location = 1
 #Modeling Options [TO DO BY USER]
 use_shapelets = False
 fix_seed = False
-source_seed_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/Sure_Lens/SIE_Lens/results_May31/random_seed_init/'
+source_seed_path = '<old results path>/random_seed_init/'
 use_mask = True
-mask_pickle_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/Sure_Lens/masks/'
+mask_pickle_path = '<old results path>/masks/'
 
 lens_model_list = ['SIE','SHEAR']
 source_model_list = ['SERSIC_ELLIPSE','SHAPELETS']#['SERSIC_ELLIPSE']
@@ -80,7 +78,7 @@ this_is_a_test = False
 # mask_arcs = True
 numCores = 1 
 
-kde_prior_path = None #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/kde_priors/'
+kde_prior_path = None 
 if kde_prior_path != None:
     with open(kde_prior_path + 'R_source.pickle', 'rb') as handle:
         kde_Rsource = pickle.load(handle)
@@ -94,17 +92,13 @@ else:
 select_objects = ['172721249991448816']#['144263545519899654','172721249991448816'] #['144641749689622225','145851483996593559','146212542943478163','149131184425371844','149231702242056192']
 
 
-
-# select_objects = ['146212542943478163', '147453588657065569', '146811460492073498', '152042584197152210', '159061368675131328', '159971385643229039', '144982524187083615', '153312671204513633', '153151470814873639', '149711188479963789', '145851483996593559', '145672527064100216', '160182190462597726', '176011993785438824', '149231702242056192', '160451579520849492', '169372488456290325', '144660330826064160', '146142398472264651', '144641749689622225', '145781905981262405', '158232388239303530', '179032201554074641', '157312175170789652', '153491914519762555', '150992349997888697', '144671353715289107', '145671796271656927', '148441655799048734', '144761439256561679', '149131184425371844']  #Object Ids or None
-
-
 # Additional info for images [TO DO BY USER]
 deltaPix = 0.1857
 zeroPt = 30
 psf_upsample_factor = 2
 ra_dec = None # 'csv', 'header', or 'None'
 ra_dec_loc = None #path to csv file or header file, or 'None'
-Mask_rad_file = None #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/mask_v2.csv' #path to csv file or 'None'
+Mask_rad_file = None #'.csv' #path to csv file or 'None'
 
 id_col_name = 'id_1'
 
