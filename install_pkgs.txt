@@ -1,0 +1,11 @@
+pip install lenstronomy --user
+
+sudo apt-get install gfortran
+git clone https://github.com/sibirrer/fastell4py.git <desired location>
+cd <desired location>
+python setup.py install --user
+
+pip install schwimmbad
+
+pip install -U setuptools setuptools_scm pep517
+pip install -U emcee
