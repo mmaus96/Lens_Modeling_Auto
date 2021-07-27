@@ -89,7 +89,7 @@ zeroPt = 30
 psf_upsample_factor = 2
 ra_dec = None # 'csv', 'header', or 'None'
 ra_dec_loc = None #path to csv file or header file, or 'None'
-Mask_rad_file = None #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/mask_v2.csv' #path to csv file or 'None'
+Mask_rad_file = None #'<path>.csv' #path to csv file or 'None'
 
 id_col_name = 'id_1'
 
