@@ -30,14 +30,14 @@ lens_light_model_list = ['SERSIC_ELLIPSE']
 
 
 #### Folder for Results ####
-results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/Compare_params'
+results_path = '<destination folder for plot results>'
 if not exists(results_path):
     os.mkdir(results_path)
 
     
 #### First set of modeling results ####
-path_1 = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/SIE_lens/'
-csv_paths_1 = path_1 + 'results_Jun1/'
+path_1 = '<parent folder>/'
+csv_paths_1 = path_1 + '<modeling results folder>/'
 
 df_final_1 = pd.read_csv(csv_paths_1 + 'full_results_sorted.csv',delimiter =',')
 
@@ -50,8 +50,8 @@ df_final_1 = pd.read_csv(csv_paths_1 + 'full_results_sorted.csv',delimiter =',')
 data_dict_1 = df_2_dict(df_final_1,band_list,lens_model_list,source_model_list,lens_light_model_list) #data set 1 as dictionary
 
 ### Second set of modeling results ####
-path_2 = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/Rings_catalog/new_priors/'
-csv_paths_2 = path_2 + 'results_Jun11/'
+path_2 = '<parent folder>/'
+csv_paths_2 = path_2 + '<modeling results folder>/'
 
 df_final_2 = pd.read_csv(csv_paths_2 + 'full_results_sorted.csv',delimiter =',')
 
@@ -71,8 +71,8 @@ deltaPix_3 = 0.1857
 obj_name_location_3 = 1
 band_list_3 = ['r']
 ### Third set of modeling results ####
-path_3 = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/Sure_Lens/SIE_lens/'
-csv_paths_3 = path_3 + 'results_May31/'
+path_3 = '<parent folder>/'
+csv_paths_3 = path_3 + '<modeling results folder>/'
 
 df_final_3 = pd.read_csv(csv_paths_3 + 'full_results_sorted.csv',delimiter =',')
 
@@ -349,7 +349,7 @@ ax[28].legend()
 
 # plt.subplot(5,5,2)
 f.tight_layout()
-f.savefig(results_path + '/compare_Jun24',dpi = 200)
+f.savefig(results_path + '/compare.png',dpi = 200)
 plt.close(f)
 # plt.show()
 
