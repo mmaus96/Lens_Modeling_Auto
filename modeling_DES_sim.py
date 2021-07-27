@@ -42,10 +42,8 @@ def printMemory(location):
 printMemory('Beginning')
 
 # file paths to image data and results destination [TO DO BY USER]
-# data_path = '/home/astro/maus/Desktop/LASTRO_lab/Specialization_Project/ringcatalog'
-# results_path = '/home/astro/maus/Desktop/LASTRO_lab/Specialization_Project/ringcatalog/results_full_catalog'
-data_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/DES'
-results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/DES/results_uncertainty'
+data_path = '' #path to image data
+results_path = '' #path to designated results folder
 
 if not exists(results_path):
     os.mkdir(results_path)
