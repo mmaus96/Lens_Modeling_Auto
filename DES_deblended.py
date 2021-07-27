@@ -50,27 +50,43 @@ from lenstronomy.Util.mask_util import mask_center_2d
       
 
 # file paths to image data and results destination [TO DO BY USER]
-# data_path = '/home/astro/maus/Desktop/LASTRO_lab/Specialization_Project/ringcatalog'
-# results_path = '/home/astro/maus/Desktop/LASTRO_lab/Specialization_Project/ringcatalog/results_full_catalog'
-data_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1'
-results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/muscadet_deblended/results_short'
+data_path = 'DES_lenses' #path to image data
+results_path = 'DES_lenses/results_test' #path to designated results folder
 
 if not exists(results_path):
     os.mkdir(results_path)
 
 #Folder names for data, psf, noise map, original image [TO DO BY USER]
-im_path = data_path + '/data'
-deblended_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/MuSCADeT_models_v4.pkl'
-deblended_path_alt = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/MuSCADeT_models_v4_2.pkl'
-# LRG_path = data_path + 'output_of_the_network_rescaled/LRG'
+im_path = data_path + '/data' #add name of folder with image data
+deblended_path = '/DES_lenses/MuSCADeT_models_v4.pkl' #add name of folder with MuSCADeT deblended data
+deblended_path_alt = '/DES_lenses/MuSCADeT_models_v4_2.pkl' #add name of folder with additional MuSCADeT deblended data
+# LRG_path = data_path + 'output_of_the_network_rescaled/LRG'  
 # source_path = data_path + 'output_of_the_network_rescaled/sources'
 # im_path = data_path + '/simulations'
-psf_path = data_path + '/psf'
-noise_path = data_path + '/psf'
-noise_type = 'EXPTIME'
-band_list = ['g','r','i']
-obj_name_location = 0
+psf_path = data_path + '/psf' #add name of folder with psf data
+noise_path = data_path + '/psf' #add name of folder with rms data, OR folder with FITS files that contain exposure times in header files (if using 'EXPTIME' for noise_type)
+noise_type = 'EXPTIME' # 'NOISE_MAP' or 'EXPTIME'
+band_list = ['g','r','i'] #list of bands
+obj_name_location = 0 # index corresponding to which string of numbers in filenames are the ID 
 
+#Modeling Options [TO DO BY USER]
+use_shapelets = False #If True,then at the end of the modeling it tries shapelets instead of Sersic for the source profile if chi^2 is too large
+fix_seed = False #bool. If True, uses saved seed values for each image from a previous modeling run
+source_seed_path = '<previous results folder>/random_seed_init/' #path to seed values to be used
+use_mask = True #bool; whether or not masks should be used in the modeling
+mask_pickle_path = '<previous results folder>/masks/'#path to masks created previously. If None, new masks will be created by the script
+Mask_rad_file = None #path to csv file or 'None'
+
+#model lists
+lens_model_list = ['SIE','SHEAR'] 
+source_model_list = ['SERSIC_ELLIPSE']
+lens_light_model_list = ['SERSIC_ELLIPSE']
+point_source_model_list = None
+this_is_a_test = False #If true, changes PSO and MCMC settings to make modeling very fast (for debugging/troubleshooting)
+numCores = 1 # number of CPUs to use 
+
+#path to Reff and n_s source distributions that lenstronomy uses for kde prior method. 
+#Warning: Method is very slow. Better to set to None
 kde_prior_path = None #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/kde_priors/'
 if kde_prior_path != None:
     with open(kde_prior_path + 'R_source.pickle', 'rb') as handle:
@@ -82,27 +98,10 @@ else:
     kde_Rsource = None
     kde_nsource = None
 
-#Modeling Options [TO DO BY USER]
-#Modeling Options [TO DO BY USER]
-fix_seed = False
-source_seed_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/SIE_lens/results_Ap30/random_seed_init_new/'
-use_shapelets = False
-use_mask = True
-mask_center = True
-# mask_pickle_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/muscadet_deblended/custom_masks/masks/'
-mask_pickle_path ='/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/muscadet_deblended/results_Jun24/masks/'
-
-lens_model_list = ['SIE','SHEAR']
-source_model_list = ['SERSIC_ELLIPSE']
-lens_light_model_list = ['SERSIC_ELLIPSE']
-point_source_model_list = None
-this_is_a_test = False
-numCores = 1 
-
-select_objects =  None
-# ['03310601','06653211','06788344','14083401',
-#                      '14327423','15977522','16033319','17103670',
-#                     '19990514']
+#specify IDs of specific images to model. Otherwise model all images in data folder 
+select_objects =  None #['03310601','06653211','06788344','14083401',
+#                     '14327423','15977522','16033319','17103670',
+#                     '19990514']  #List of strings with object IDs, or None
 
 
 # Additional info for images [TO DO BY USER]
@@ -110,8 +109,8 @@ deltaPix = 0.27
 zeroPt = 30
 psf_upsample_factor = 1
 ra_dec = 'csv' # 'csv', 'header', or 'None'
-ra_dec_loc = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/group1_v2.csv'#path to csv file or header file, or 'None'
-Mask_rad_file = None #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/mask_v2.csv' #path to csv file or 'None'
+ra_dec_loc = '.csv'#path to csv file or header file, or 'None'
+Mask_rad_file = None #'.csv' #path to csv file with mask radii or 'None'
 
 id_col_name = 'id_1'
 
