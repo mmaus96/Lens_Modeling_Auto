@@ -25,34 +25,34 @@ band_list = ['g','r','i']
 
 
 #### Folder for Results ####
-results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/Compare_params'
+results_path = '<destination folder for plot results>'
 if not exists(results_path):
     os.mkdir(results_path)
 
     
 #### First set of modeling results ####
-path_1 = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Sure_Lens/'
-csv_paths_1 = [path_1 + 'results_new_priors/']
+path_1 = '<parent folder>/'
+csv_paths_1 = [path_1 + '<modeling results folder>/'] #can combine multiple data sets
 
 df_list_1 = [pd.read_csv(csv_paths_1[0] + 'full_results.csv',delimiter =',')]
 
 for i in range(len(csv_paths_1)-1):
     df = pd.read_csv(csv_paths_1[i+1] + 'full_results.csv',delimiter =',')
-    df_list_1.append(df.loc[1:,:])    
+    df_list_1.append(df.loc[:,:])    
     
 df_final_1 = pd.concat(df_list_1,axis=0,ignore_index=True) #Final dataframe of data set 1
 
 data_dict_1 = df_2_dict(df_final_1,band_list,obj_name_location) #data set 1 as dictionary
 
 ### Second set of modeling results ####
-path_2 = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/ringcatalog/'
-csv_paths_2 = [path_2 + 'results_full_catalog/']
+path_2 = '<parent folder>/'
+csv_paths_2 = [path_2 + '<modeling results folder>/'] #can combine multiple data sets
 
 df_list_2 = [pd.read_csv(csv_paths_2[0] + 'full_results.csv',delimiter =',')]
 
 for i in range(len(csv_paths_2)-1):
     df = pd.read_csv(csv_paths_2[i+1] + 'full_results.csv',delimiter =',')
-    df_list_2.append(df.loc[1:,:])    
+    df_list_2.append(df.loc[:,:])    
     
 df_final_2 = pd.concat(df_list_2,axis=0,ignore_index=True)
 
