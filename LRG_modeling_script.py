@@ -48,30 +48,30 @@ from Lens_Modeling_Auto.plot_functions import plot_LRG_fit
       
 
 # file paths to image data and results destination [TO DO BY USER]
-# data_path = '/home/astro/maus/Desktop/LASTRO_lab/Specialization_Project/ringcatalog'
-# results_path = '/home/astro/maus/Desktop/LASTRO_lab/Specialization_Project/ringcatalog/results_full_catalog'
-data_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/LRG_modeling/LRG_data'
-results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/LRG_modeling/results_mask'
+data_path = '/LRG_data'
+results_path = 'LRG_data/results_test'
 
 if not exists(results_path):
     os.mkdir(results_path)
 
 #Folder names for data, psf, noise map, original image [TO DO BY USER]
-im_path = data_path + '/IMA'
+im_path = data_path + '/IMA' #add name of folder with image data
 # im_path = data_path + '/simulations'
-psf_path = data_path + '/PSF'
-noise_path = data_path + '/RMS'
-noise_type = 'NOISE_MAP'
-band_list = ['r']
-obj_name_location = 1
+psf_path = data_path + '/PSF' #add name of folder with psf data
+noise_path = data_path + '/RMS' #add name of folder with rms data, OR folder with FITS files that contain exposure times in header files (if using 'EXPTIME' for noise_type)
+noise_type = 'NOISE_MAP' # 'NOISE_MAP' or 'EXPTIME'
+band_list = ['r'] #list of bands
+obj_name_location = 1 # index corresponding to which string of numbers in filenames are the ID 
 
 #Modeling Options [TO DO BY USER]
-use_shapelets = False
-fix_seed = False
-source_seed_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/Sure_Lens/SIE_Lens/results_custom_masks_3/fix_seed/'
-use_mask = True
-mask_pickle_path = None #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/Sure_Lens/SIE_Lens/custom_masks/'
+use_shapelets = False #If True,then at the end of the modeling it tries shapelets instead of Sersic for the source profile if chi^2 is too large
+fix_seed = False #bool. If True, uses saved seed values for each image from a previous modeling run
+source_seed_path = '<previous results folder>/random_seed_init/' #path to seed values to be used
+use_mask = True #bool; whether or not masks should be used in the modeling
+mask_pickle_path = '<previous results folder>/masks/'#path to masks created previously. If None, new masks will be created by the script
+Mask_rad_file = None #path to csv file or 'None'
 
+#model lists [TO DO BY USER]
 lens_model_list = []
 source_model_list = []
 lens_light_model_list = ['SERSIC_ELLIPSE']
