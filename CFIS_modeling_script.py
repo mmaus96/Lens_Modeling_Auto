@@ -49,7 +49,7 @@ from Lens_Modeling_Auto.plot_functions import save_chain_list
 data_path = '/CFIS_lenses' #path to image data
 results_path = '/CFIS_lenses/results_test' #path to designated results folder
 
-if not exists(results_path):
+if not exists(results_path): #creates results folder if it doesn't already exist
     os.mkdir(results_path)
 
 #Folder names for data, psf, noise map, original image [TO DO BY USER]
