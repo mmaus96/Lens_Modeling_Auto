@@ -46,7 +46,7 @@ from lenstronomy.Util.mask_util import mask_center_2d
 
 #####################################################################################################################
 
-# nohup python -u ./Lens_Modeling_Auto/DES_deblended.py > lens_candidates/Group1/muscadet_deblended/results_short/output_logs/output0_8.log &
+# nohup python -u ./Lens_Modeling_Auto/DES_deblended.py > /results_test/output_logs/output1.log &
       
 
 # file paths to image data and results destination [TO DO BY USER]
