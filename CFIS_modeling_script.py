@@ -42,23 +42,21 @@ from Lens_Modeling_Auto.plot_functions import save_chain_list
 
 #####################################################################################################################
 
-# nohup python -u ./Lens_Modeling_Auto/CFIS_modeling_script.py > CFIS_lenses/Sure_Lens/SIE_Lens/results_modeling_times/output.log &
+# nohup python -u ./Lens_Modeling_Auto/CFIS_modeling_script.py > /results/output.log &
       
 
 # file paths to image data and results destination [TO DO BY USER]
-# data_path = '/home/astro/maus/Desktop/LASTRO_lab/Specialization_Project/ringcatalog'
-# results_path = '/home/astro/maus/Desktop/LASTRO_lab/Specialization_Project/ringcatalog/results_full_catalog'
-data_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses'
-results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/Sure_Lens/SIE_Lens/results_modeling_times'
+data_path = '/CFIS_lenses' #path to image data
+results_path = '/CFIS_lenses/results_test' #path to designated results folder
 
 if not exists(results_path):
     os.mkdir(results_path)
 
 #Folder names for data, psf, noise map, original image [TO DO BY USER]
-im_path = data_path + '/data'
+im_path = data_path + '/data' #add name of folder with image data
 # im_path = data_path + '/simulations'
-psf_path = data_path + '/psf'
-noise_path = data_path + '/rms'
+psf_path = data_path + '/psf' #add name of folder with psf data
+noise_path = data_path + '/rms' #add name of folder with rms data, OR folder with FITS files that contain exposure times in header files (if using 'EXPTIME' for noise_type)
 noise_type = 'NOISE_MAP' # 'NOISE_MAP' or 'EXPTIME'
 band_list = ['r'] #list of bands
 obj_name_location = 1 # index corresponding to which string of numbers in filenames are the ID
@@ -66,9 +64,9 @@ obj_name_location = 1 # index corresponding to which string of numbers in filena
 #Modeling Options [TO DO BY USER]
 use_shapelets = False #If True,then at the end of the modeling it tries shapelets instead of Sersic for the source profile if chi^2 is too large
 fix_seed = True #bool. If True, uses saved seed values for each image from a previous modeling run
-source_seed_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/Sure_Lens/SIE_Lens/results_May31/random_seed_init/' #path to seed values to be used
+source_seed_path = '<previous results folder>/random_seed_init/' #path to seed values to be used
 use_mask = True #bool; whether or not masks should be used in the modeling
-mask_pickle_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/Sure_Lens/masks/'#path to masks created previously. If None, new masks will be created by the script
+mask_pickle_path = '<previous results folder>/masks/'#path to masks created previously. If None, new masks will be created by the script
 Mask_rad_file = None #path to csv file or 'None'
 
 #model lists
@@ -82,7 +80,7 @@ numCores = 1 # number of CPUs to use
 
 #path to Reff and n_s source distributions that lenstronomy uses for kde prior method. 
 #Warning: Method is very slow. Better to set to None
-kde_prior_path = None #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/kde_priors/'
+kde_prior_path = None #'<folder with R_eff and n_s distributions saved as pickle files>'
 if kde_prior_path != None:
     with open(kde_prior_path + 'R_source.pickle', 'rb') as handle:
         kde_Rsource = pickle.load(handle)
