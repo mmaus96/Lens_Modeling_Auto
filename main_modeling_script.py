@@ -26,6 +26,8 @@ from Lens_Modeling_Auto.auto_modeling_functions import estimate_radius
 from Lens_Modeling_Auto.auto_modeling_functions import find_lens_gal
 from Lens_Modeling_Auto.fit_sequence_functions import initial_model_params
 from Lens_Modeling_Auto.fit_sequence_functions import initial_modeling_fit
+from Lens_Modeling_Auto.fit_sequence_functions import initial_fits_arcs_masked
+
 from Lens_Modeling_Auto.fit_sequence_functions import full_sampling
 from Lens_Modeling_Auto.plot_functions import make_modelPlots
 from Lens_Modeling_Auto.plot_functions import make_chainPlots
@@ -41,19 +43,15 @@ from Lens_Modeling_Auto.plot_functions import save_chain_list
 
 #####################################################################################################################
 
-# nohup python -u ./Lens_Modeling_Auto/main_modeling_script.py > lens_candidates/Group1/PEMD_lens/results_Mar29/output_logs/output0_6.log &
+# nohup python -u ./Lens_Modeling_Auto/main_modeling_script.py > results_path/output_logs/output1.log &
 
 # print('lenstronomy version: {}'.format(lenstronomy.__version__))
 
 # file paths to image data and results destination [TO DO BY USER]
-data_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1'
-results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/test_save_mask'
-# results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/PEMD_lens/results_Mar29'
+data_path = '' #path to image data
+results_path = '' #path to designated results folder
 
-# data_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Sure_Lens'
-# results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Sure_Lens/results_e1e2_free'
-
-if not exists(results_path):
+if not exists(results_path): #creates results folder if it doesn't already exist
     os.mkdir(results_path)
 
 #Folder names for data, psf, noise map, original image [TO DO BY USER]
@@ -61,30 +59,51 @@ im_path = data_path + '/data'
 # im_path = data_path + '/simulations'
 psf_path = data_path + '/psf'
 noise_path = data_path + '/psf'
-noise_type = 'EXPTIME'
-band_list = ['g','r','i']
-obj_name_location = 0
+noise_type = 'EXPTIME' # 'NOISE_MAP' or 'EXPTIME'
+band_list = ['g','r','i'] #list of bands
+obj_name_location = 0 # index corresponding to which string of numbers in filenames are the ID 
 
 #Modeling Options [TO DO BY USER]
-use_shapelets = False
-use_mask = True
-lens_model_list = ['SIE','SHEAR']
+fix_seed = False #bool. If True, uses saved seed values for each image from a previous modeling run
+source_seed_path = '/random_seed_init/' #path to seed values to be used
+use_shapelets = False #If True,then at the end of the modeling it tries shapelets instead of Sersic for the source profile if chi^2 is too large
+use_mask = True #whether or not masks should be used in the modeling
+mask_pickle_path = '/masks/' #path to masks created previously. If None, new masks will be created by the script
+Mask_rad_file = None #'.csv' #path to csv file with pre-calculated mask size or 'None' 
+
+#model lists [TO DO BY USER]
+lens_model_list = ['SIE','SHEAR'] 
 source_model_list = ['SERSIC_ELLIPSE']
 lens_light_model_list = ['SERSIC_ELLIPSE']
-this_is_a_test = True
-numCores = 1 
+point_source_model_list = None
+this_is_a_test = False #If true, changes PSO and MCMC settings to make modeling very fast (for debugging/troubleshooting)
+numCores = 1 # number of CPUs to use 
 
-select_objects = None #['06653211','06788344','07087938','11308901','25315733','19990514']  #List of strings with object IDs, or None
+#path to Reff and n_s source distributions that lenstronomy uses for kde prior method. 
+#Warning: Method is very slow. Better to set to None
+kde_prior_path = None #path to R_eff and n_s distributions for source priors (must be saved as .pickle files)
+if kde_prior_path != None:
+    with open(kde_prior_path + 'R_source.pickle', 'rb') as handle:
+        kde_Rsource = pickle.load(handle)
+        
+    with open(kde_prior_path + 'n_source.pickle', 'rb') as handle:
+        kde_nsource = pickle.load(handle)
+else:
+    kde_Rsource = None
+    kde_nsource = None
+
+#specify IDs of specific images to model. Otherwise model all images in data folder 
+select_objects =  None #['03310601','06653211','06788344','14083401',
+#                     '14327423','15977522','16033319','17103670',
+#                     '19990514']  #List of strings with object IDs, or None
 
 # Additional info for images [TO DO BY USER]
-deltaPix = 0.27
-zeroPt = 30
-psf_upsample_factor = 1
-ra_dec = 'csv' # 'csv', 'header', or 'None'
-ra_dec_loc = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/group_1.csv' #path to csv file or header file, or 'None'
-Mask_rad_file = None #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/mask_v2.csv' #path to csv file or 'None'
-
-id_col_name = 'id_1'
+deltaPix = 0.27 #pixel scale of the images in arcsec/pixel
+zeroPt = 30 #not used anywhere
+psf_upsample_factor = 1 #If psf is upsampled
+ra_dec = 'csv' # 'csv', 'header', or 'None'. Where to find ra and dec values if desired for naming. Otherwise will have 'N/A' in RA and DEC columns of results
+ra_dec_loc = '.csv' #path to csv file or header file, or 'None'
+id_col_name = 'id_1' #column in csv file to look for image IDs
 
 printMemory('Beginning')
 
@@ -95,7 +114,7 @@ printMemory('Beginning')
 #####################################################################################################################
 
 
-
+#find files
 im_files = [f for f in listdir(im_path) if isfile('/'.join([im_path,f]))]
 psf_files,noise_files = [],[]
 psf_files_dict, noise_files_dict = {},{}
@@ -108,14 +127,14 @@ for b in band_list:
 
 
 
-    
+#Extract object IDs from filenames     
 obj_names = []
 if not select_objects:
     for x in im_files:
         obj_names.append(re.findall('\d+', x)[obj_name_location])
 else: obj_names = deepcopy(select_objects)
 
-
+#sort all file names and info into list of dicts
 data_pairs_dicts = []
 for i,obj in enumerate(obj_names):
     for x in im_files:
@@ -135,11 +154,11 @@ for i,obj in enumerate(obj_names):
         df_info = pd.read_csv(ra_dec_loc)
         RA, DEC = 'N/A','N/A'
         for j in range(len(df_info.loc[:,:])):
-            if int(df_info.loc[j,id_col_name]) == int(obj): RA,DEC = df_info.loc[j,'ra'],df_info.loc[j,'dec']
+            if float(df_info.loc[j,id_col_name]) == float(obj): RA,DEC = df_info.loc[j,'ra'],df_info.loc[j,'dec']
     else: RA, DEC = 'N/A','N/A'
     
     data_pairs_dicts.append({'image_data': im , 'psf': psf , 'noise_map': noise, 
-                             'noise_type': noise_type,'object_ID': obj,'RA': RA, 'DEC': DEC})
+                             'noise_type': noise_type,'object_ID': str(int(obj)),'RA': RA, 'DEC': DEC})
 
 data_pairs_dicts = sorted(data_pairs_dicts, key=lambda k: float(k['object_ID']))
 data_pairs_cut = []
@@ -171,28 +190,39 @@ print('\n')
 ################################################### Begin Modeling ##################################################
 
 #####################################################################################################################
-
-f = open(results_path + "/initial_params.txt","w")#append mode
-f.write('\n' + '###############################################################################################' + ' \n')
-f.write('\n')
-f.write('\n' + '################################### Modeling Initial Params ###################################' + ' \n')
-f.write('\n')
-f.write('\n' + '###############################################################################################' + ' \n')
-f.write('\n')
-f.write('lenstronomy version: {}'.format(lenstronomy.__version__))
-f.write('\n')
-f.write('numpy version: {}'.format(np.__version__))
-f.write('\n')
-f.write('astropy version: {}'.format(astropy.__version__))
-f.write('\n')
-f.write('scipy version: {}'.format(scipy.__version__))
-f.write('\n')
-f.close()
+if not exists(results_path + "/initial_params.txt"):
+    f = open(results_path + "/initial_params.txt","w")#append mode
+    f.write('\n' + '###############################################################################################' + ' \n')
+    f.write('\n')
+    f.write('\n' + '################################### Modeling Initial Params ###################################' + ' \n')
+    f.write('\n')
+    f.write('\n' + '###############################################################################################' + ' \n')
+    f.write('\n')
+    f.write('lenstronomy version: {}'.format(lenstronomy.__version__))
+    f.write('\n')
+    f.write('numpy version: {}'.format(np.__version__))
+    f.write('\n')
+    f.write('astropy version: {}'.format(astropy.__version__))
+    f.write('\n')
+    f.write('scipy version: {}'.format(scipy.__version__))
+    f.write('\n')
+    f.close()
 
 printMemory('Before loop')
+
+tic0 = time.perf_counter() #start timer
+
+if not exists(results_path + "/Modeling_times.txt"):
+    f = open(results_path + "/Modeling_times.txt","w")
+    f.write('\n' + '###############################################################################################' + ' \n')
+    f.write('\n')
+    f.write('\n' + '######################################## Modeling Times #######################################' + ' \n')
+    f.write('\n')
+    f.write('\n' + '###############################################################################################' + ' \n')
+    f.close()
     
 for it in range(len(data_pairs_dicts)):    
-#     it += 42 
+#     it += 45 #use this if you want to start at a specific index in data_pairs_dicts
     
 #     if (not data_pairs_dicts[it]['psf']) or (not data_pairs_dicts[it]['noise_map']):
 #         continue
@@ -294,7 +324,7 @@ for it in range(len(data_pairs_dicts)):
     
     ############################## Prepare Mask ############################
     
-    c_x,c_y = find_lens_gal(kwargs_data[-1]['image_data'],deltaPix,show_plot=True,title=data_pairs_dicts[it]['object_ID'])
+    c_x,c_y = find_lens_gal(kwargs_data[-1]['image_data'],deltaPix,show_plot=False,title=data_pairs_dicts[it]['object_ID'])
     
     if Mask_rad_file == None:
         mask_size_ratio = None
@@ -307,39 +337,87 @@ for it in range(len(data_pairs_dicts)):
         
     
     gal_mask_list = []
+    gal_rad_as = 5 * deltaPix  
     mask_list = []
+    mask_dict_list = []
 #     sizes_As = []
 #     sizes_px = []
 
     if use_mask:
-        if not exists(results_path + '/masks'):
-            os.mkdir(results_path + '/masks')
-        mask_path = results_path + '/masks'
-        for k,data in enumerate(kwargs_data): 
+        if mask_pickle_path != None:
+            print('Using saved mask instead of creating one')
+#             mask_list = []
+            for k,data in enumerate(kwargs_data): 
+                with open(mask_pickle_path + '{}/{}.pickle'.format(band_list[k],data_pairs_dicts[it]['object_ID']), 'rb') as handle:
+                    mask_dict = pickle.load(handle)
+                    mask_list.append(mask_dict['mask'])
+                    mask_dict_list.append(mask_dict)
+                    
+                mask_gal = mask_for_sat(data['image_data'],deltaPix,
+                                              lens_rad_arcsec = gal_rad_as,
+                                              center_x=c_x,center_y=c_y,
+                                              lens_rad_ratio = None, 
+                                              show_plot = False)
+                gal_mask_list.append(mask_gal)
+                
+                mask_path = results_path + '/masks'
+                
+                if mask_pickle_path != mask_path:
+                    if not exists(mask_path):
+                        os.mkdir(mask_path)
+                    band_path = mask_path + '/' + band_list[k]
+                    
+                    if not exists(band_path):
+                        os.mkdir(band_path)
+                    
+                    with open(band_path + '/{}.pickle'.format(data_pairs_dicts[it]['object_ID']), 'wb') as handle:
+                        pickle.dump(mask_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                    
+                    
             
-            band_path = mask_path + '/' + band_list[k]
-            if not exists(band_path):
-                os.mkdir(band_path)
+        else:
+            for k,data in enumerate(kwargs_data): 
+                if not exists(results_path + '/masks'):
+                    os.mkdir(results_path + '/masks')
+                mask_path = results_path + '/masks'
+                
+                band_path = mask_path + '/' + band_list[k]
+                if not exists(band_path):
+                    os.mkdir(band_path)
 
-            mask = mask_for_sat(data['image_data'],deltaPix,
-                                          lens_rad_arcsec = mask_size_as,
-                                          center_x=c_x,center_y=c_y,
-                                          lens_rad_ratio = mask_size_ratio, 
-                                          show_plot = False)
-            mask_list.append(mask)
+                mask = mask_for_sat(data['image_data'],deltaPix,
+                                              lens_rad_arcsec = mask_size_as,
+                                              center_x=c_x,center_y=c_y,
+                                              lens_rad_ratio = mask_size_ratio, 
+                                              show_plot = False)
+                mask_list.append(mask)
 
-            with open(band_path + '/Image_{}-{}.pickle'.format(it+1, data_pairs_dicts[it]['object_ID']), 'wb') as handle:
-                    pickle.dump(mask, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    #             sizes_As.append(size_Arcsec)
-    #             sizes_px.append(size_pix)
+
+                mask_dict = {}
+                mask_dict['c_x'] = c_x
+                mask_dict['c_y'] = c_y
+                mask_dict['size arcsec'] = mask_size_as
+                mask_dict['size pixels'] = mask_size_px
+                mask_dict['mask'] = mask
+                mask_dict_list.append(mask_dict)
+                with open(band_path + '/{}.pickle'.format(data_pairs_dicts[it]['object_ID']), 'wb') as handle:
+                        pickle.dump(mask_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        #             sizes_As.append(size_Arcsec)
+        #             sizes_px.append(size_pix)
         
     else: mask_list = None
+        
+#     if not mask_arcs:
+#         gal_mask_list = deepcopy(mask_list) 
+    
     
     file = open(results_path+"/initial_params.txt","a")#append mode 
     file.write("Mask Size: \n")
-    file.write("{} pixels,{} arcsec \n".format(mask_size_px,mask_size_as))
+    file.write("{} pixels,{} arcsec \n".format(mask_dict_list[0]['size pixels'],mask_dict_list[0]['size arcsec']))
     file.write("Mask Center: \n")
-    file.write("({},{}) \n".format(c_x,c_y))
+    file.write("({},{}) \n".format(mask_dict_list[0]['c_x'],mask_dict_list[0]['c_y']))
+    if mask_pickle_path != None:
+        file.write(mask_pickle_path)
     file.close() 
     
     ################################################################################################################# 
@@ -361,15 +439,56 @@ for it in range(len(data_pairs_dicts)):
                                 #,['MCMC', {'n_burn': 0, 'n_run': 100, 'walkerRatio': 10, 'sigma_scale': .1,'threadCount':numCores}]
                               ]
 
-   
+    if fix_seed:
+        with open(source_seed_path + '{}.pickle'.format(data_pairs_dicts[it]['object_ID']), 'rb') as handle:
+            seed_val = pickle.load(handle)
+            print('Using seed from: {}'.format(source_seed_path))
+            print(seed_val)
+    else: seed_val = None
+    
+    name = '{}.pickle'.format(data_pairs_dicts[it]['object_ID'])
+    save_seed_path = results_path + '/random_seed_init/'
+    save_seed_file = save_seed_path + name
+    
+    init_chainList_path = results_path + '/chain_lists_init/'
+    init_chainList_file = init_chainList_path + name
+    if not exists(save_seed_path):
+        os.mkdir(save_seed_path)
+    if not exists(init_chainList_path):
+        os.mkdir(init_chainList_path)
     
     
-    lens_initial_params,source_initial_params,lens_light_initial_params = initial_model_params(lens_model_list)
+    (lens_initial_params,
+     source_initial_params,
+     lens_light_initial_params,
+     ps_initial_params) = initial_model_params(lens_model_list,point_source_model_list = point_source_model_list)
     
-    kwargs_params,kwargs_fixed, kwargs_result,chain_list,kwargs_likelihood, kwargs_model, kwargs_data_joint, multi_band_list, kwargs_constraints = initial_modeling_fit(fitting_kwargs_list,lens_model_list,source_model_list,
-                                          lens_light_model_list,lens_initial_params,
-                                          source_initial_params,lens_light_initial_params,
-                                          kwargs_data,kwargs_psf,mask_list)
+#     (kwargs_params,kwargs_fixed, kwargs_result,
+#      chain_list,kwargs_likelihood, kwargs_model, 
+#      kwargs_data_joint, multi_band_list, 
+#      kwargs_constraints) = initial_modeling_fit(fitting_kwargs_list,lens_model_list,source_model_list,
+#                                                 lens_light_model_list,lens_initial_params,
+#                                                 source_initial_params,lens_light_initial_params,
+#                                                 kwargs_data,kwargs_psf,mask_list,fix_seed = fix_seed,
+#                                                 fix_seed_val = seed_val,save_seed_file = save_seed_file, 
+#                                                 chainList_file = init_chainList_file)
+    
+    (kwargs_params,kwargs_fixed, kwargs_result,
+     chain_list,kwargs_likelihood, kwargs_model, 
+     kwargs_data_joint, multi_band_list, 
+     kwargs_constraints)= initial_fits_arcs_masked(fitting_kwargs_list,lens_model_list,
+                                                 source_model_list,lens_light_model_list,
+                                                 lens_initial_params,source_initial_params,
+                                                 lens_light_initial_params,
+                                                 kwargs_data,
+                                                 kwargs_psf,mask_list = mask_list, 
+                                                 gal_mask_list = gal_mask_list,
+                                                 kde_nsource=kde_nsource,kde_Rsource=kde_Rsource,
+                                                 fix_seed = fix_seed,fix_seed_val = seed_val,
+                                                 save_seed_file = save_seed_file, 
+                                                 chainList_file = init_chainList_file,
+                                                 ps_model_list =point_source_model_list,
+                                                 ps_initial_params = ps_initial_params)
 
 #     exec(open('Lens_Modeling_Auto/initial_modeling_fit.py').read())
     
@@ -380,6 +499,13 @@ for it in range(len(data_pairs_dicts)):
     
     print('\n')
     print('First sampling took: {:.2f} minutes'.format((toc1 - tic)/60.0))
+    
+    f = open(results_path + "/Modeling_times.txt","a")
+    f.write('\n')
+    f.write('Image: {}'.format(it+1))
+    f.write('\n')
+    f.write('Pre-sampling optimization time: {:.4f} minutes'.format((toc1 - tic)/60.0))
+    f.close()
     
     
     multi_source_model_list = []
@@ -414,10 +540,16 @@ for it in range(len(data_pairs_dicts)):
     
     
     
-    chain_list, kwargs_result,kwargs_params,kwargs_likelihood, kwargs_model, kwargs_data_joint, multi_band_list, kwargs_constraints = full_sampling(fitting_kwargs_list,kwargs_params, 
+    (chain_list, kwargs_result,kwargs_params,
+     kwargs_likelihood, kwargs_model, 
+     kwargs_data_joint, multi_band_list, 
+     kwargs_constraints) = full_sampling(fitting_kwargs_list,kwargs_params, 
                                                         kwargs_data, kwargs_psf,lens_model_list, 
                                                         source_model_list,lens_light_model_list,
-                                                        mask_list)
+                                                        kde_nsource=kde_nsource,
+                                                        kde_Rsource=kde_Rsource,
+                                                        mask_list=mask_list,
+                                                        ps_model_list = point_source_model_list)
     
 #     if not this_is_a_test:
 #         exec(open('Lens_Modeling_Auto/Full_Sampling.py').read())
@@ -429,6 +561,10 @@ for it in range(len(data_pairs_dicts)):
     print('Full sampling took: {:.2f} minutes'.format((toc2 - toc1)/60.0), '\n',
          'Total time: {:.2f} minutes'.format((toc2 - tic)/60.0))
     
+    f = open(results_path + "/Modeling_times.txt","a")
+    f.write('\n')
+    f.write('Main Sampling time: {:.4f} minutes'.format((toc2 - toc1)/60.0))
+    f.close()
     
     print('\n')
     
@@ -495,8 +631,9 @@ for it in range(len(data_pairs_dicts)):
     print('\n')
     print('writing model parameter results to csv files')
     
+    toc3 = time.perf_counter()
+    image_model_time = (toc3 - tic)/60.0
     print(kwargs_result)
-    
     exec(open('Lens_Modeling_Auto/save_to_csv_full.py').read())
 #     exec(open('Lens_Modeling_Auto/save_to_csv_full_old.py').read())
     
@@ -634,6 +771,20 @@ for it in range(len(data_pairs_dicts)):
 #     exec(open('Lens_Modeling_Auto/save_to_csv_lens_old.py').read())
     print('\n')
     print('image {} modeling completed!'.format(it+1))
+    print('\n')
+    toc_end = time.perf_counter()
+    print('Modeling time for this image: {} minutes'.format((toc_end - tic)/60.0), '\n',
+         'Total time of this modeling run: {} hours'.format((toc_end - tic0)/3600.0))
+    
+    print('\n')
+    
+    f = open(results_path + "/Modeling_times.txt","a")
+    f.write('\n')
+    f.write('Modeling time for this image: {:.4f} minutes'.format((toc_end - tic)/60.0))
+    f.write('\n')
+    f.write('Total time of this modeling run: {:.4f} hours'.format((toc_end - tic0)/3600.0))
+    f.write('\n')
+    f.close()
     
     printMemory('After save to csv/end of image')
     
