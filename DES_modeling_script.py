@@ -102,7 +102,7 @@ deltaPix = 0.27 #pixel scale of the images in arcsec/pixel
 zeroPt = 30 #not used anywhere
 psf_upsample_factor = 1 #If psf is upsampled
 ra_dec = 'csv' # 'csv', 'header', or 'None'. Where to find ra and dec values if desired for naming. Otherwise will have 'N/A' in RA and DEC columns of results
-ra_dec_loc = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/group1_v2.csv' #path to csv file or header file, or 'None'
+ra_dec_loc = '<path>.csv' #path to csv file or header file, or 'None'
 id_col_name = 'id_1' #column in csv file to look for image IDs
 
 printMemory('Beginning')
