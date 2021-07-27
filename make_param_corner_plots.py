@@ -29,17 +29,15 @@ from scipy.stats import norm
 
 #### Create dataframe from csv file(s) ####
 
-path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/Sure_Lens/'
-csv_path = path + 'SIE_lens/results_Ap25/'
-results_path = path + 'SIE_lens/results_Ap25'
+path = '<parent folder>/'
+csv_path = path + '<modeling results>/'
+results_path = path + '<modeling results>'
 
-# path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/'
+# path = '/lens_candidates/Group1/'
 # csv_path = path + 'SIE_lens/results_Ap30/'
 # results_path = path + 'SIE_lens/results_Ap30'
 
-# path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/ringcatalog/'
-# csv_path = path + 'results_May3/'
-# results_path = path + 'results_May3'
+
 
 if not exists(results_path):
     os.mkdir(results_path)
