@@ -48,28 +48,39 @@ from Lens_Modeling_Auto.plot_functions import save_chain_list
 # print('lenstronomy version: {}'.format(lenstronomy.__version__))
 
 # file paths to image data and results destination [TO DO BY USER]
-data_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/Rings_catalog'
-results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/Rings_catalog/new_priors/results_Jun11'
-# results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/Rings_catalog/new_priors/test'
-# results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/SIE_lens/test_use_seed'
-# results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/PEMD_lens/results_Mar29'
+data_path = '' #path to image data
+results_path = '' #path to designated results folder
 
-# data_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Sure_Lens'
-# results_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Sure_Lens/results_e1e2_free'
-
-if not exists(results_path):
+if not exists(results_path): #creates results folder if it doesn't already exist
     os.mkdir(results_path)
 
 #Folder names for data, psf, noise map, original image [TO DO BY USER]
-im_path = data_path + '/data'
-# im_path = data_path + '/simulations'
-psf_path = data_path + '/psf'
-noise_path = data_path + '/psf'
-noise_type = 'EXPTIME' #'NOISE_MAP' or 'EXPTIME'
-band_list = ['g','r','i']
-obj_name_location = 0
+im_path = data_path + '/' #add name of folder with image data
+psf_path = data_path + '/' #add name of folder with psf data
+noise_path = data_path + '/' #add name of folder with rms data, OR folder with FITS files that contain exposure times in header files (if using 'EXPTIME' for noise_type) 
+noise_type = '' # 'NOISE_MAP' or 'EXPTIME'
+band_list = ['g','r','i'] #list of bands
+obj_name_location = 0 # index corresponding to which string of numbers in filenames are the ID 
 
-kde_prior_path = None #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/kde_priors/'
+#Modeling Options [TO DO BY USER]
+fix_seed = False #bool. If True, uses saved seed values for each image from a previous modeling run
+source_seed_path = '/random_seed_init/' #path to seed values to be used
+use_shapelets = False #If True,then at the end of the modeling it tries shapelets instead of Sersic for the source profile if chi^2 is too large
+use_mask = True #whether or not masks should be used in the modeling
+mask_pickle_path = '/masks/' #path to masks created previously. If None, new masks will be created by the script
+Mask_rad_file = None #'.csv' #path to csv file with pre-calculated mask size or 'None' 
+
+#model lists [TO DO BY USER]
+lens_model_list = ['SIE','SHEAR'] 
+source_model_list = ['SERSIC_ELLIPSE']
+lens_light_model_list = ['SERSIC_ELLIPSE']
+point_source_model_list = None
+this_is_a_test = False #If true, changes PSO and MCMC settings to make modeling very fast (for debugging/troubleshooting)
+numCores = 1 # number of CPUs to use 
+
+#path to Reff and n_s source distributions that lenstronomy uses for kde prior method. 
+#Warning: Method is very slow. Better to set to None
+kde_prior_path = None #path to R_eff and n_s distributions for source priors (must be saved as .pickle files)
 if kde_prior_path != None:
     with open(kde_prior_path + 'R_source.pickle', 'rb') as handle:
         kde_Rsource = pickle.load(handle)
@@ -80,30 +91,18 @@ else:
     kde_Rsource = None
     kde_nsource = None
 
-#Modeling Options [TO DO BY USER]
-fix_seed = False
-source_seed_path = None #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/ringcatalog/results_May3/random_seed_init/'
-use_shapelets = False 
-use_mask = True
-mask_pickle_path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/Rings_catalog/masks/'
-
-lens_model_list = ['SIE','SHEAR']
-source_model_list = ['SERSIC_ELLIPSE']
-lens_light_model_list = ['SERSIC_ELLIPSE']
-this_is_a_test = False
-numCores = 1 
-
-select_objects = None #['06653211','06788344','07087938','11308901','25315733','19990514']  #List of strings with object IDs, or None
+#specify IDs of specific images to model. Otherwise model all images in data folder 
+select_objects =  None #['03310601','06653211','06788344','14083401',
+#                     '14327423','15977522','16033319','17103670',
+#                     '19990514']  #List of strings with object IDs, or None
 
 # Additional info for images [TO DO BY USER]
-deltaPix = 0.27
-zeroPt = 30
-psf_upsample_factor = 1
-ra_dec = 'csv' # 'csv', 'header', or 'None'
-ra_dec_loc = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/Rings_catalog/Rings_cat_sv.csv' #path to csv file or header file, or 'None'
-Mask_rad_file = None #'/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/mask_v2.csv' #path to csv file or 'None'
-
-id_col_name = 'id'
+deltaPix =  #pixel scale of the images in arcsec/pixel
+zeroPt = 30 #not used anywhere - can put anything
+psf_upsample_factor = 1 #If psf is upsampled
+ra_dec = 'csv' # 'csv', 'header', or None. Where to find ra and dec values if desired for naming. Otherwise will have 'N/A' in RA and DEC columns of results
+ra_dec_loc = '.csv' #path to csv file or header file, or None
+id_col_name = 'id_1' #column name in csv file to look for image IDs
 
 printMemory('Beginning')
 
