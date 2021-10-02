@@ -27,13 +27,13 @@ from copy import deepcopy
 
 #### Create dataframe from csv file(s) ####
 
-# path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/Sure_Lens/'
-# csv_path = path + 'SIE_lens/results_May31/'
-# results_path = path + 'SIE_lens/results_May31'
+path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/CFIS_lenses/Sure_Lens/'
+csv_path = path + 'SIE_lens/results_May31/'
+results_path = path + 'SIE_lens/results_May31'
 
-path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/'
-csv_path = path + 'SIE_lens/results_Jun1/'
-results_path = path + 'SIE_lens/results_Jun1'
+# path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/lens_candidates/Group1/'
+# csv_path = path + 'SIE_lens/results_Jun1/'
+# results_path = path + 'SIE_lens/results_Jun1'
 
 # path = '/Users/markmaus/Desktop/Physics_EPFL/Specialization_Project/ringcatalog/'
 # csv_path = path + 'results_May3/'
